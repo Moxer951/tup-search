@@ -1,0 +1,381 @@
+--- START OF FILE index.html ---
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>سیستم جستجوی سوالات و پاسخ‌نامه</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .description {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .search-container {
+            margin-bottom: 30px;
+            position: relative;
+        }
+        
+        #searchInput {
+            width: 100%;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        #searchInput:focus {
+            border-color: #6a11cb;
+            box-shadow: 0 2px 15px rgba(106, 17, 203, 0.2);
+        }
+        
+        .results-count {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: #666;
+            text-align: center;
+        }
+        
+        .questions-container {
+            display: grid;
+            gap: 20px;
+        }
+        
+        .question-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 5px solid #6a11cb;
+        }
+        
+        .question-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .question-number {
+            display: inline-block;
+            background-color: #6a11cb;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .question-text {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+        
+        .options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .option {
+            padding: 10px 15px;
+            border-radius: 8px;
+            background-color: #f8f9fa;
+            border: 1px solid #e9ecef;
+        }
+        
+        .correct-answer {
+            padding: 12px 15px;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            color: #155724;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        .highlight {
+            background-color: #fff3cd;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.2rem;
+        }
+
+        .loading-message {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.5rem;
+            color: #6a11cb;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>سیستم جستجوی سوالات و پاسخ‌نامه</h1>
+            <p class="description">سوالات خود را جستجو کنید و پاسخ صحیح را مشاهده نمایید</p>
+        </header>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="عبارت مورد نظر برای جستجو را وارد کنید..." disabled>
+            <div class="results-count" id="resultsCount">درحال بارگذاری داده‌ها...</div>
+        </div>
+        
+        <div class="questions-container" id="questionsContainer">
+            <div class="loading-message">درحال بارگذاری اطلاعات سوالات از فایل‌های JSON... لطفا منتظر بمانید.</div>
+        </div>
+        
+        <footer>
+            <p>ساخته شده برای نمایش سوالات و پاسخ‌های صحیح</p>
+        </footer>
+    </div>
+
+    <script>
+        // تعریف لیست فایل‌های JSON که باید بارگذاری شوند
+        const fileList = [
+            "t1.json",
+            "t10.json",
+            "t11.json",
+            "t12.json",
+            "t13 pt1.json",
+            "t13 pt2.json",
+            "t2.json",
+            "t3.json",
+            "t4.json",
+            "t5.json"
+            // اگر فایل‌های دیگری اضافه کردید، اینجا وارد کنید
+        ];
+
+        let allQuestions = []; // آرایه جهانی برای نگهداری تمام سوالات ادغام شده
+
+        // ===============================================
+        // توابع اصلی
+        // ===============================================
+
+        /**
+         * تابع ناهمزمان برای بارگذاری و ادغام تمام داده‌ها از فایل‌های JSON
+         */
+        async function loadAllData() {
+            const container = document.getElementById('questionsContainer');
+            const resultsCount = document.getElementById('resultsCount');
+            const searchInput = document.getElementById('searchInput');
+
+            // ساختن آرایه‌ای از Promiseها برای واکشی همزمان تمام فایل‌ها
+            const fetchPromises = fileList.map(file => 
+                fetch(file)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Failed to load file: ${file} (Status: ${response.status})`);
+                        }
+                        return response.json();
+                    })
+                    .catch(error => {
+                        console.error(`Error processing file ${file}:`, error);
+                        // اگر فایلی خطا داد، آرایه خالی برمی‌گردانیم تا سیستم از کار نیفتد
+                        return []; 
+                    })
+            );
+
+            try {
+                // صبر کردن برای اتمام تمام واکشی‌ها
+                const results = await Promise.all(fetchPromises);
+                
+                // ادغام (Flatten) آرایه‌های سوالات از تمام فایل‌ها به یک آرایه واحد
+                allQuestions = results.flat().filter(q => q && q.question);
+
+                if (allQuestions.length === 0) {
+                    container.innerHTML = `<div class="no-results">خطا در بارگذاری داده‌ها یا فایل‌های JSON خالی هستند.</div>`;
+                    resultsCount.textContent = 'خطا در بارگذاری';
+                } else {
+                    console.log(`Successfully loaded ${allQuestions.length} total questions.`);
+                    // فعال سازی سیستم پس از بارگذاری موفق
+                    initializeSystem();
+                }
+
+            } catch (error) {
+                console.error("Critical error during data loading:", error);
+                container.innerHTML = `<div class="no-results">خطای بحرانی در بارگذاری داده‌ها. لطفا کنسول را بررسی کنید.</div>`;
+                resultsCount.textContent = 'خطا در بارگذاری';
+            }
+        }
+
+        /**
+         * تابع برای جستجوی سوالات در آرایه جهانی
+         */
+        function searchQuestions(query) {
+            if (!query.trim()) {
+                return allQuestions;
+            }
+            
+            // استفاده از عبارت با قاعده (Regex) برای جستجو بدون حساسیت به حروف بزرگ/کوچک
+            const regex = new RegExp(query, 'i');
+            
+            const results = allQuestions.filter(question => {
+                // جستجو در متن سوال
+                if (regex.test(question.question)) {
+                    return true;
+                }
+                
+                // جستجو در گزینه‌ها
+                for (const optionKey in question.options) {
+                    if (regex.test(question.options[optionKey])) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            });
+            
+            return results;
+        }
+
+        /**
+         * تابع برای نمایش سوالات
+         */
+        function displayQuestions(questions) {
+            const container = document.getElementById('questionsContainer');
+            const resultsCount = document.getElementById('resultsCount');
+            const searchTerm = document.getElementById('searchInput').value;
+            
+            if (questions.length === 0) {
+                container.innerHTML = '<div class="no-results">هیچ سوالی یافت نشد</div>';
+                resultsCount.textContent = '0 نتیجه یافت شد';
+                return;
+            }
+            
+            resultsCount.textContent = `${questions.length} نتیجه یافت شد`;
+            
+            container.innerHTML = '';
+            
+            // Regex برای هایلایت کردن کلمه جستجو شده (در صورت وجود)
+            const highlightRegex = searchTerm ? new RegExp(searchTerm, 'gi') : null;
+
+            questions.forEach((question, index) => {
+                const questionElement = document.createElement('div');
+                questionElement.className = 'question-card';
+                
+                let highlightedQuestion = question.question;
+
+                // اعمال هایلایت روی متن سوال
+                if (highlightRegex) {
+                    highlightedQuestion = question.question.replace(highlightRegex, match => 
+                        `<span class="highlight">${match}</span>`
+                    );
+                }
+                
+                let optionsHTML = '';
+                for (const option in question.options) {
+                    let optionText = question.options[option];
+                    
+                    // اعمال هایلایت روی متن گزینه‌ها
+                    if (highlightRegex) {
+                        optionText = optionText.replace(highlightRegex, match => 
+                            `<span class="highlight">${match}</span>`
+                        );
+                    }
+                    
+                    optionsHTML += `<div class="option">${option}: ${optionText}</div>`;
+                }
+
+                // ما از index + 1 استفاده می‌کنیم تا شماره‌گذاری سوالات در لیست ادغام‌شده پیوسته باشد
+                const displayNum = index + 1;
+                
+                questionElement.innerHTML = `
+                    <div class="question-number">${displayNum}</div>
+                    <div class="question-text">${highlightedQuestion}</div>
+                    <div class="options">${optionsHTML}</div>
+                    <div class="correct-answer">پاسخ صحیح: ${question.correctAnswer} - ${question.options[question.correctAnswer]}</div>
+                `;
+                
+                container.appendChild(questionElement);
+            });
+        }
+
+        /**
+         * تابع راه اندازی سیستم پس از بارگذاری داده‌ها
+         */
+        function initializeSystem() {
+            const searchInput = document.getElementById('searchInput');
+            
+            // فعال سازی فیلد جستجو
+            searchInput.disabled = false;
+            
+            // رویداد جستجو هنگام تایپ
+            searchInput.addEventListener('input', function() {
+                const query = this.value;
+                const results = searchQuestions(query);
+                displayQuestions(results);
+            });
+
+            // نمایش همه سوالات در ابتدا
+            displayQuestions(allQuestions);
+        }
+
+        // شروع فرآیند بارگذاری داده‌ها
+        loadAllData();
+    </script>
+</body>
+</html>

@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>سیستم جستجوی سوالات و پاسخ‌نامه</title>
     <style>
+        /*
+        ========================================
+        DARK THEME STYLES
+        ========================================
+        */
         * {
             box-sizing: border-box;
             margin: 0;
@@ -15,8 +20,10 @@
         }
         
         body {
-            background-color: #f5f7fa;
-            color: #333;
+            /* پس‌زمینه بسیار تیره */
+            background-color: #1a1a1a; 
+            /* متن روشن */
+            color: #e0e0e0; 
             line-height: 1.6;
             padding: 20px;
         }
@@ -30,10 +37,11 @@
             text-align: center;
             margin-bottom: 30px;
             padding: 20px;
-            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            /* رنگ سربرگ خنثی و تیره */
+            background: #252525; 
             color: white;
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
         }
         
         h1 {
@@ -43,7 +51,7 @@
         
         .description {
             font-size: 1.1rem;
-            opacity: 0.9;
+            opacity: 0.8;
         }
         
         .search-container {
@@ -55,22 +63,26 @@
             width: 100%;
             padding: 15px 20px;
             font-size: 1.1rem;
-            border: 2px solid #ddd;
+            /* پس‌زمینه جستجو کمی روشن‌تر از بدنه */
+            background-color: #2c2c2c; 
+            color: #e0e0e0;
+            border: 2px solid #444;
             border-radius: 50px;
             outline: none;
             transition: all 0.3s ease;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
         }
         
         #searchInput:focus {
-            border-color: #6a11cb;
-            box-shadow: 0 2px 15px rgba(106, 17, 203, 0.2);
+            /* تمرکز با یک رنگ متضاد ملایم (آبی مایل به خاکستری) */
+            border-color: #4a86b3; 
+            box-shadow: 0 2px 15px rgba(74, 134, 179, 0.4);
         }
         
         .results-count {
             margin-top: 10px;
             font-size: 0.9rem;
-            color: #666;
+            color: #a0a0a0;
             text-align: center;
         }
         
@@ -80,22 +92,26 @@
         }
         
         .question-card {
-            background: white;
+            /* پس‌زمینه کارت‌ها */
+            background: #252525;
             border-radius: 10px;
             padding: 20px;
-            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.08);
+            box-shadow: 0 3px 15px rgba(0, 0, 0, 0.4);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            border-left: 5px solid #6a11cb;
+            /* نوار کناری با رنگ متضاد */
+            border-left: 5px solid #4a86b3; 
         }
         
         .question-card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.12);
+            background: #2c2c2c;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6);
         }
         
         .question-number {
             display: inline-block;
-            background-color: #6a11cb;
+            /* استفاده از رنگ متضاد */
+            background-color: #4a86b3; 
             color: white;
             width: 30px;
             height: 30px;
@@ -128,22 +144,25 @@
         .option {
             padding: 10px 15px;
             border-radius: 8px;
-            background-color: #f8f9fa;
-            border: 1px solid #e9ecef;
+            /* پس‌زمینه گزینه‌ها */
+            background-color: #333333; 
+            border: 1px solid #444444;
         }
         
         .correct-answer {
             padding: 12px 15px;
-            background-color: #d4edda;
-            border: 1px solid #c3e6cb;
-            border-radius: 8px;
-            color: #155724;
+            /* رنگ سبز تیره برای پاسخ صحیح */
+            background-color: #1e4620; 
+            border: 1px solid #3d6640;
+            color: #d4edda;
             font-weight: bold;
             margin-top: 10px;
         }
         
         .highlight {
-            background-color: #fff3cd;
+            /* هایلایت زرد تیره */
+            background-color: #5e4d00; 
+            color: #ffc107;
             padding: 2px 4px;
             border-radius: 4px;
         }
@@ -151,7 +170,7 @@
         .no-results {
             text-align: center;
             padding: 40px;
-            color: #666;
+            color: #a0a0a0;
             font-size: 1.2rem;
         }
 
@@ -159,16 +178,16 @@
             text-align: center;
             padding: 40px;
             font-size: 1.5rem;
-            color: #6a11cb;
+            color: #4a86b3; /* استفاده از رنگ متضاد ملایم */
         }
         
         footer {
             text-align: center;
             margin-top: 40px;
             padding: 20px;
-            color: #666;
+            color: #888;
             font-size: 0.9rem;
-            border-top: 1px solid #eee;
+            border-top: 1px solid #333;
         }
     </style>
 </head>
@@ -206,7 +225,6 @@
             "t3.json",
             "t4.json",
             "t5.json"
-            // اگر فایل‌های دیگری اضافه کردید، اینجا وارد کنید
         ];
 
         let allQuestions = []; // آرایه جهانی برای نگهداری تمام سوالات ادغام شده
@@ -247,7 +265,7 @@
                 allQuestions = results.flat().filter(q => q && q.question);
 
                 if (allQuestions.length === 0) {
-                    container.innerHTML = `<div class="no-results">خطا در بارگذاری داده‌ها یا فایل‌های JSON خالی هستند.</div>`;
+                    container.innerHTML = `<div class="no-results">خطا در بارگذاری داده‌ها یا فایل‌های JSON خالی هستند. اطمینان حاصل کنید که فایل‌های JSON در کنار index.html قرار دارند و ساختار درستی دارند.</div>`;
                     resultsCount.textContent = 'خطا در بارگذاری';
                 } else {
                     console.log(`Successfully loaded ${allQuestions.length} total questions.`);
@@ -257,7 +275,7 @@
 
             } catch (error) {
                 console.error("Critical error during data loading:", error);
-                container.innerHTML = `<div class="no-results">خطای بحرانی در بارگذاری داده‌ها. لطفا کنسول را بررسی کنید.</div>`;
+                container.innerHTML = `<div class="no-results">خطای بحرانی در بارگذاری داده‌ها. لطفا کنسول مرورگر را بررسی کنید.</div>`;
                 resultsCount.textContent = 'خطا در بارگذاری';
             }
         }
@@ -267,6 +285,7 @@
          */
         function searchQuestions(query) {
             if (!query.trim()) {
+                // اگر جستجو خالی بود، همه سوالات نمایش داده می‌شوند
                 return allQuestions;
             }
             
@@ -340,7 +359,7 @@
                     optionsHTML += `<div class="option">${option}: ${optionText}</div>`;
                 }
 
-                // ما از index + 1 استفاده می‌کنیم تا شماره‌گذاری سوالات در لیست ادغام‌شده پیوسته باشد
+                // استفاده از index + 1 برای شماره‌گذاری پیوسته
                 const displayNum = index + 1;
                 
                 questionElement.innerHTML = `
@@ -362,6 +381,7 @@
             
             // فعال سازی فیلد جستجو
             searchInput.disabled = false;
+            searchInput.placeholder = 'عبارت مورد نظر برای جستجو را وارد کنید...';
             
             // رویداد جستجو هنگام تایپ
             searchInput.addEventListener('input', function() {
